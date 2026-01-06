@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>我的旅遊規劃 - 藍黃新風格 v2</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@700;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            /* 更新後的指定顏色 */
+            --main-blue: #E5F4FF;      /* 新指定的淡藍色 */
+            --main-yellow: #FFFFDF;    /* 指定鵝黃色 */
+            
+            /* 輔助配色 */
+            --dark-text: #3D4F5E;      /* 深藍灰色文字，與新藍色更協調 */
+            --accent-blue: #7FBBEF;    /* 重點藍色 */
+            --border-line: #CFE2F3;    /* 邊框色 */
+        }
+
+        body {
+            font-family: 'Noto Sans TC', sans-serif;
+            background-color: var(--main-blue); /* 全局背景改為新藍色 */
+            margin: 0; padding: 20px;
+            display: flex; flex-direction: column; align-items: center;
+            color: var(--dark-text);
+        }
+
+        h1 { font-weight: 900; margin-bottom: 25px; color: var(--dark-text); }
+
+        .grid-container {
+            display: grid; grid-template-columns: repeat(2, 1fr);
+            gap: 15px; width: 100%; max-width: 600px;
+        }
+
+        .grid-item {
+            background: var(--main-yellow); /* 卡片維持鵝黃色 */
+            border: 2px solid var(--border-line);
+            border-radius: 20px; 
+            box-shadow: 4px 6px 15px rgba(0, 0, 0, 0.05);
+            padding: 20px; text-align: center; cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .grid-item:active { transform: scale(0.96); }
+
+        .grid-item.full-width { 
+            grid-column: span 2; 
+            background-color: #FFFFFF; 
+            border: 2px solid var(--border-line);
+        }
+
+        .accent-text { color: var(--accent-blue); font-size: 26px; font-weight: 900; }
+
+        /* 計算機彈窗 */
+        #calc-overlay {
+            display: none; position: fixed; top: 0; left: 0; 
+            width: 100%; height: 100%; 
+            background: rgba(229, 244, 255, 0.85); /* 使用新藍色作為半透明背景 */
+            z-index: 2000; justify-content: center; align-items: center;
+            backdrop-filter: blur(10px);
+        }
+
+        .calc-box {
+            background: var(--main-yellow); width: 85%; max-width: 350px;
+            border: 2px solid var(--border-line); border-radius: 25px;
+            padding: 25px; box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+        }
+
+        .calc-display {
+            background: white; border: 2px solid var(--border-line);
+            padding: 15px; font-size: 32px; text-align: right;
+            margin-bottom: 15px; border-radius: 15px; font-weight: 900;
+            color: var(--accent-blue);
+        }
+
+        .calc-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+
+        .calc-btn {
+            background: white; border: 1px solid var(--border-line);
+            padding: 15px; font-size: 20px; font-weight: 900;
+            border-radius: 15px; cursor: pointer; color: var(--dark-text);
+        }
+
+        .btn-blue { background: var(--main-blue); border: none; }
+        .btn-save { background: var(--accent-blue); color: white; border: none; }
+    </style>
+</head>
+<body>
+
+    <h1>旅遊規劃小幫手</h1>
+
+    <div class="grid-container">
+        <div class="grid-item full-width">
+            <h2 style="color:var(--accent-blue); margin-top:0;">📅 旅遊行程表</h2>
+            <p>日本沖繩 ・ 冒險開始！</p>
+        </div>
+
+        <div class="grid-item" onclick="toggleCalc()">
+            <h3>💰 記帳本</h3>
+            <div class="accent-text" id="total-expense">¥ 0</div>
+            <p style="font-size:12px; color:#888;">點擊開啟換算</p>
+        </div>
+
+        <div class="grid-item">
+            <h3>📍 景點收藏</h3>
+            <div class="accent-text">12</div>
+        </div>
+    </div>
+
+    <div id="calc-overlay">
+        <div class="calc-box">
+            <h3 style="margin-top:0; text-align:center;">日幣換算 (0.21)</h3>
+            <div class="calc-display" id="display">0</div>
+            <div id="tw-result" style="margin-bottom:15px; text-align:center; color:var(--accent-blue); font-weight:bold; font-size:18px;">TWD: $0</div>
+            
+            <div class="calc-grid">
+                <button class="calc-btn" onclick="inputNum('7')">7</button>
+                <button class="calc-btn" onclick="inputNum('8')">8</button>
+                <button class="calc-btn" onclick="inputNum('9')">9</button>
+                <button class="calc-btn btn-blue" onclick="clearCalc()">C</button>
+                <button class="calc-btn" onclick="inputNum('4')">4</button>
+                <button class="calc-btn" onclick="inputNum('5')">5</button>
+                <button class="calc-btn" onclick="inputNum('6')">6</button>
+                <button class="calc-btn btn-blue" onclick="toggleCalc()">關</button>
+                <button class="calc-btn" onclick="inputNum('1')">1</button>
+                <button class="calc-btn" onclick="inputNum('2')">2</button>
+                <button class="calc-btn" onclick="inputNum('3')">3</button>
+                <button class="calc-btn btn-save" onclick="saveExpense()">存</button>
+                <button class="calc-btn" style="grid-column: span 2;" onclick="inputNum('0')">0</button>
+                <button class="calc-btn" onclick="inputNum('.')">.</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentInput = "";
+        const rate = 0.21;
+
+        function toggleCalc() {
+            const overlay = document.getElementById('calc-overlay');
+            overlay.style.display = (overlay.style.display === 'flex') ? 'none' : 'flex';
+        }
+
+        function inputNum(num) {
+            currentInput += num;
+            updateDisplay();
+        }
+
+        function clearCalc() {
+            currentInput = "";
+            updateDisplay();
+        }
+
+        function updateDisplay() {
+            document.getElementById('display').innerText = currentInput || "0";
+            let twd = Math.round(Number(currentInput) * rate);
+            document.getElementById('tw-result').innerText = "TWD: $" + twd;
+        }
+
+        function saveExpense() {
+            if(currentInput) {
+                document.getElementById('total-expense').innerText = "¥ " + currentInput;
+                toggleCalc();
+            }
+        }
+    </script>
+</body>
+</html>
